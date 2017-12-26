@@ -89,10 +89,10 @@ void *detect_in_thread(void *ptr)
         error("Last layer must produce detections\n");
     }
     if (nms > 0) do_nms(boxes, probs, l.w*l.h*l.n, l.classes, nms);
-    printf("\033[2J");
-    printf("\033[1;1H");
-    printf("\nFPS:%.1f\n",fps);
-    printf("Objects:\n\n");
+    //printf("\033[2J");
+    //printf("\033[1;1H");
+    //printf("\nFPS:%.1f\n",fps);
+    //printf("Objects:\n\n");
 
     images[demo_index] = det;
     det = images[(demo_index + FRAMES/2 + 1)%FRAMES];
@@ -179,12 +179,15 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
 
     int count = 0;
     if(!prefix){
-        cvNamedWindow("Demo", CV_WINDOW_NORMAL); 
-        cvMoveWindow("Demo", 0, 0);
-        cvResizeWindow("Demo", 1352, 1013);
+        //cvNamedWindow("Demo", CV_WINDOW_NORMAL); 
+        //cvMoveWindow("Demo", 0, 0);
+        //cvResizeWindow("Demo", 1352, 1013);
     }
 
     double before = get_wall_time();
+
+	printf("STARTED\n");
+	fflush(stdout);
 
     while(1){
         ++count;

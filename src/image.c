@@ -242,12 +242,17 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
 #ifdef OPENCV
 void draw_detections_cv(IplImage* show_img, int num, float thresh, box *boxes, float **probs, char **names, image **alphabet, int classes)
 {
+	printf("[");
 	int i;
+	int c = 0;
 
 	for (i = 0; i < num; ++i) {
 		int class = max_index(probs[i], classes);
 		float prob = probs[i][class];
 		if (prob > thresh) {
+			if (c != 0) {
+				printf(",");
+			}
 
 			int width = show_img->height * .012;
 
@@ -256,7 +261,7 @@ void draw_detections_cv(IplImage* show_img, int num, float thresh, box *boxes, f
 				alphabet = 0;
 			}
 
-			printf("%s: %.0f%%\n", names[class], prob * 100);
+			//printf("%s: %.0f%%\n", names[class], prob * 100);
 			int offset = class * 123457 % classes;
 			float red = get_color(2, offset, classes);
 			float green = get_color(1, offset, classes);
@@ -298,7 +303,10 @@ void draw_detections_cv(IplImage* show_img, int num, float thresh, box *boxes, f
 			color.val[2] = blue * 256;
 
 			cvRectangle(show_img, pt1, pt2, color, width, 8, 0);
-			//printf("left=%d, right=%d, top=%d, bottom=%d, obj_id=%d, obj=%s \n", left, right, top, bot, class, names[class]);
+			
+			printf("{ \"left\": %d, \"right\":%d, \"top\": %d, \"bottom\":%d, \"obj_id\":%d, \"obj\":\"%s\", \"prob\":%.0f% }", left, right, top, bot, class, names[class], prob * 100);
+			c++;
+
 			cvRectangle(show_img, pt_text_bg1, pt_text_bg2, color, width, 8, 0);
 			cvRectangle(show_img, pt_text_bg1, pt_text_bg2, color, CV_FILLED, 8, 0);	// filled
 			CvScalar black_color;
@@ -308,6 +316,8 @@ void draw_detections_cv(IplImage* show_img, int num, float thresh, box *boxes, f
 			cvPutText(show_img, names[class], pt_text, &font, black_color);
 		}
 	}
+	printf("]\n");
+	fflush(stdout);
 }
 #endif
 
@@ -498,7 +508,7 @@ void show_image_cv(image p, const char *name)
 
     IplImage *disp = cvCreateImage(cvSize(p.w,p.h), IPL_DEPTH_8U, p.c);
     int step = disp->widthStep;
-    cvNamedWindow(buff, CV_WINDOW_NORMAL); 
+    //cvNamedWindow(buff, CV_WINDOW_NORMAL); 
     //cvMoveWindow(buff, 100*(windows%10) + 200*(windows/10), 100*(windows%10));
     ++windows;
     for(y = 0; y < p.h; ++y){
@@ -521,7 +531,7 @@ void show_image_cv(image p, const char *name)
         cvResize(buffer, disp, CV_INTER_LINEAR);
         cvReleaseImage(&buffer);
     }
-    cvShowImage(buff, disp);
+    //cvShowImage(buff, disp);
 
     cvReleaseImage(&disp);
 }
@@ -533,10 +543,10 @@ void show_image_cv_ipl(IplImage *disp, const char *name, const char *out_filenam
 	char buff[256];
 	//sprintf(buff, "%s (%d)", name, windows);
 	sprintf(buff, "%s", name);
-	cvNamedWindow(buff, CV_WINDOW_NORMAL);
+	//cvNamedWindow(buff, CV_WINDOW_NORMAL);
 	//cvMoveWindow(buff, 100*(windows%10) + 200*(windows/10), 100*(windows%10));
 	++windows;
-	cvShowImage(buff, disp);
+	//cvShowImage(buff, disp);
 
 	if(out_filename)
 	{
