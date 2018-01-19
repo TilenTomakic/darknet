@@ -4,7 +4,6 @@
 *.out
 *.png
 mnist/
-data/
 caffe/
 grasp/
 images/
@@ -13,7 +12,6 @@ convnet/
 decaf/
 submission/
 cfg/
-darknet
 .fuse*
 
 # OS Generated #
